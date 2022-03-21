@@ -113,18 +113,19 @@ async function getFromGarmin(userName, start=1, limit=15) {
   const response = await request.loadJSON();
   return response;
 }
-// Function to check if data is within trailing timeframe
+// Function to check if data is within timeframe
 function withinTimeframe(days, date){
   if (days.toString() == "week"){
-    let today = new Date();
-    let first = today.getDate() - today.getDay() + 1;
-    var firstday = new Date(today.setDate(first));
-    firstday.setHours(0,0,0);
-    var daysms = Math.abs(new Date() - firstday);
+    const week = [6, 0, 1, 2, 3, 4, 5,];
+    let firstday = new Date();
+    firstday.setHours(0,0,1);
+    firstday.setDate(firstday.getDate() - week[firstday.getDay()]);
+    var diff = Math.abs(new Date() - new Date(date.replace(/-/g,'/')));
+    var daysms = Math.abs(new Date() - firstday)
   } else {
     var daysms = parseInt(days)*(1000 * 3600 * 24);
+    var diff = Math.abs(new Date() - new Date(date.replace(/-/g,'/')));
   }
-  let diff = Math.abs(new Date() - new Date(date.replace(/-/g,'/')));
   if (daysms > diff){
     return true;
   } else {
