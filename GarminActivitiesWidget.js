@@ -41,11 +41,25 @@ Script.complete();
 async function createWidget() {
   // Background
   let g = new LinearGradient();
-  g.locations = [0, 1];
+//  g.locations = [0, 0.48, 0.49, 0.5, 0.51, 0.52, 1];
+//  g.locations = [0, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5, 0.51, 0.52, 0.53, 0.54, 0.55, 1];
+g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
   g.colors = [
-    new Color("#6DCFF6"),
-    new Color("#007cc3")
+    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
   ];
+//  g.startPoint = new Point(0.1, 0.3);
+//  g.endPoint = new Point(0.8, 0.95);
   // Making widget
   let w = new ListWidget()
   w.setPadding(10, 10, 10, 10);
@@ -56,7 +70,7 @@ async function createWidget() {
   titleStack.cornerRadius = 4;
   let wtitle = titleStack.addText(widgetTitle);
   wtitle.font = Font.semiboldRoundedSystemFont(26);
-  wtitle.textColor = new Color("#1c2d2c");
+  wtitle.textColor = new Color("#1d2e2d");
   wtitle.leftAlignText();
   w.addSpacer(5);  
   // Getting data
@@ -85,10 +99,10 @@ async function createWidget() {
               val = (activitiesResults[activity][value]).toString();
             }
             let valtxt = r.addText(val);
-            valtxt.textColor = new Color("#1c2d2c");
+            valtxt.textColor = new Color("#1d2e2d");
             valtxt.font = Font.semiboldRoundedSystemFont(16);
             let suftxt = r.addText(suffix[value]);
-            suftxt.textColor = new Color("#1c2d2c");
+            suftxt.textColor = new Color("#1d2e2d");
             suftxt.font = Font.semiboldRoundedSystemFont(16);
           }
         }
