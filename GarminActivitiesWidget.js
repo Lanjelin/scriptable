@@ -18,6 +18,7 @@ const dataLayout = {
   line3: [["padding:35", "total"], ["distance"]],
   line4: [["padding:35", "total"], ["calories"]],
 };
+const spacerBottom = 0
 // How-to
 //
 // formatting: line1: [["padding:5", "activity", "padding:5"], ["activity-data", "padding:15" "activity-data"]]
@@ -72,7 +73,7 @@ g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
   wtitle.font = Font.semiboldRoundedSystemFont(26);
   wtitle.textColor = new Color("#1d2e2d");
   wtitle.leftAlignText();
-  w.addSpacer(5);  
+  w.addSpacer(5);
   // Getting data
   let garminData = await getFromGarmin(userName, 1, maxActivities);
   let activitiesResults = await getActivities(garminData, timeFrame);
@@ -116,6 +117,7 @@ g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
     let row = table.addStack()
     pickAndChoose(values[0], values[1], row);
   }
+  w.addSpacer(spacerBottom);
   return w;
 }
 
