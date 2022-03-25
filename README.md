@@ -5,7 +5,8 @@ Collection of scripts made for Scriptable on iOS
 Configurable to support number of activities, calories, distance and duration, for workout, walk, run, bike.  
 Trailing days, or this week as an option, and a function to add custom padding. Requires Garmin Connect profile set to public.  
 
-<img width="266" alt="Screenshot 2022-03-22 at 22 30 53" src="https://user-images.githubusercontent.com/6988319/159579998-37fc800a-f86b-4310-8f6e-4f87afb63ef7.png"><img width="266" alt="Screenshot 2022-03-22 at 22 33 45" src="https://user-images.githubusercontent.com/6988319/159580017-590eafa7-1348-4388-9aba-48d02296228b.png">
+![light](https://user-images.githubusercontent.com/6988319/160084916-fbd04d92-481e-4215-a158-456c1c756cd9.png)
+![dark](https://user-images.githubusercontent.com/6988319/160084899-734e8d1d-2d5a-4f19-ab6b-e37256b70a31.png)
 
 
 
