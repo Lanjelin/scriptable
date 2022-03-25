@@ -1,5 +1,5 @@
 //
-// Garmin 
+// Garmin Widget
 //
 // Requires Profile visibility set to All / Public
 // https://connect.garmin.com/modern/settings/privacySettings
@@ -13,12 +13,17 @@ const userName = "Lanjelin";
 const timeFrame = "week";   // "week" or number representing trailing days
 const maxActivities = 15;   // limit amount of data pulled
 const dataLayout = {
-  line1: [["workout"], ["activities", "duration", "calories"]],
-  line2: [["run"], ["activities", "duration", "calories"]],
-  line3: [["padding:35", "total"], ["distance"]],
-  line4: [["padding:35", "total"], ["calories"]],
+  line1: [["total"], ["calories"]],
+  line2: [["workout", "padding:90"], ["activities", "duration", "calories"]],
+  line3: [["run"], ["activities", "duration", "calories", "distance"]],
 };
-const spacerBottom = 0
+const spacerBottom = 10;  // lift the content from the bottom
+const bg_light1 = new Color("#fefefe");
+const bg_light2 = new Color("#f1f1f1");
+const bg_dark1 = new Color("#272727")
+const bg_dark2 = new Color("#1d1d1d");
+const text_light = new Color("#f1f1f1")
+const text_dark = new Color("#1d1d1d");
 // How-to
 //
 // formatting: line1: [["padding:5", "activity", "padding:5"], ["activity-data", "padding:15" "activity-data"]]
@@ -46,18 +51,18 @@ async function createWidget() {
 //  g.locations = [0, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5, 0.51, 0.52, 0.53, 0.54, 0.55, 1];
 g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
   g.colors = [
-    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#6DCFF6"), Color.lightGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
-    Color.dynamic(new Color("#007CC3"), Color.darkGray()),
+    Color.dynamic(bg_light1, bg_dark1),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light1, bg_dark1),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light1, bg_dark1),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light1, bg_dark1),
+    Color.dynamic(bg_light2, bg_dark2),
+    Color.dynamic(bg_light2, bg_dark2),
   ];
 //  g.startPoint = new Point(0.1, 0.3);
 //  g.endPoint = new Point(0.8, 0.95);
@@ -71,7 +76,7 @@ g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
   titleStack.cornerRadius = 4;
   let wtitle = titleStack.addText(widgetTitle);
   wtitle.font = Font.semiboldRoundedSystemFont(26);
-  wtitle.textColor = new Color("#1d2e2d");
+  wtitle.textColor = Color.dynamic(text_dark, text_light);
   wtitle.leftAlignText();
   w.addSpacer(5);
   // Getting data
@@ -100,10 +105,10 @@ g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
               val = (activitiesResults[activity][value]).toString();
             }
             let valtxt = r.addText(val);
-            valtxt.textColor = new Color("#1d2e2d");
+            valtxt.textColor = Color.dynamic(text_dark, text_light);
             valtxt.font = Font.semiboldRoundedSystemFont(16);
             let suftxt = r.addText(suffix[value]);
-            suftxt.textColor = new Color("#1d2e2d");
+            suftxt.textColor = Color.dynamic(text_dark, text_light);
             suftxt.font = Font.semiboldRoundedSystemFont(16);
           }
         }
