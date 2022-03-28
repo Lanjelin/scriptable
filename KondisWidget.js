@@ -57,7 +57,7 @@ async function createWidget() {
     let titleStack = w.addStack();
     if (useImageAsTitle) {
         titleStack.size = new Size(320, 18);
-        let img = await new Request("https://raw.githubusercontent.com/Lanjelin/scriptable/assets/images/main/kondis.png").loadImage();
+        let img = await new Request("https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/images/kondis.png").loadImage();
         let wtitle = titleStack.addImage(img);
     } else {
         titleStack.size = new Size(320, 0);
