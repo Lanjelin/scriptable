@@ -10,7 +10,7 @@ Trailing days, or this week as an option, and a function to add custom padding. 
 [<img width="125" src="https://scriptdu.de/download.svg">](https://scriptdu.de/?name=GarminWidget&source=https%3A%2F%2Fraw.githubusercontent.com%2FLanjelin%2Fscriptable%2Fmain%2FGarminActivitiesWidget.js&docs=https%3A%2F%2Fgithub.com%2FLanjelin%2Fscriptable)
 
 ## KondisWidget.js
-Widget to display upcoming activities viewable on [Kondis Terminliste](https://terminlista.kondis.no/). Fully configurable within script.
+Widget to display upcoming activities viewable on [Kondis Terminliste](https://terminlista.kondis.no/). Fully configurable within script. Clicking event names will open corresponding event page in your browser.
 
 <img width="300" src="https://user-images.githubusercontent.com/6988319/160444100-0c2d9837-377e-4141-ac84-499a8bfb4ab1.png"><img width="300" src="https://user-images.githubusercontent.com/6988319/160444110-071a2aed-724e-4556-8db9-08e333b86be4.png">
 
