@@ -5,13 +5,14 @@ Collection of scripts made for Scriptable on iOS
 Configurable to support number of activities, calories, distance and duration, for workout, walk, run, bike.  
 Trailing days, or this week as an option, and a function to add custom padding. Requires Garmin Connect profile set to public.  
 
-![light](https://user-images.githubusercontent.com/6988319/160084916-fbd04d92-481e-4215-a158-456c1c756cd9.png)
-![dark](https://user-images.githubusercontent.com/6988319/160084899-734e8d1d-2d5a-4f19-ab6b-e37256b70a31.png)
+<img width="300" src="https://user-images.githubusercontent.com/6988319/160443894-6cef8698-ba07-436c-a5a0-0425e0ebf158.png"><img width="300" src="https://user-images.githubusercontent.com/6988319/160443961-15baee45-f2a9-4f71-9a15-9fea85695b6a.png">
 
 [<img width="125" src="https://scriptdu.de/download.svg">](https://scriptdu.de/?name=GarminWidget&source=https%3A%2F%2Fraw.githubusercontent.com%2FLanjelin%2Fscriptable%2Fmain%2FGarminActivitiesWidget.js&docs=https%3A%2F%2Fgithub.com%2FLanjelin%2Fscriptable)
 
 ## KondisWidget.js
-Widget to display upcoming activities viewable on [Kondis Terminliste](https://terminlista.kondis.no/).
+Widget to display upcoming activities viewable on [Kondis Terminliste](https://terminlista.kondis.no/). Fully configurable within script.
+
+<img width="300" src="https://user-images.githubusercontent.com/6988319/160444100-0c2d9837-377e-4141-ac84-499a8bfb4ab1.png"><img width="300" src="https://user-images.githubusercontent.com/6988319/160444110-071a2aed-724e-4556-8db9-08e333b86be4.png">
 
 [<img width="125" src="https://scriptdu.de/download.svg">](https://scriptdu.de/?name=KondisWidget&source=https%3A%2F%2Fraw.githubusercontent.com%2FLanjelin%2Fscriptable%2Fmain%2FKondisWidget.js&docs=https%3A%2F%2Fgithub.com%2FLanjelin%2Fscriptable)
 
