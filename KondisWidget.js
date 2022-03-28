@@ -6,11 +6,12 @@ const location = "rogaland";
 const sport = "running"; // all, running, skiing, cycling or multisport
 const distanceFrom = 5000; // distance in meters
 const distanceTo = 10000; // distance in meters
-const numActivities = 6; // how many activities to display, adjust for bigger widget sizes
 const getCarousel = false; // get carousel runs?
 const filterOutActivities = []; // hide activities based on name
 // Styling
 const spacerBottom = 0; // padding at bottom if needed
+const numActivitiesMedium = 6;
+const numActivitiesLarge = 18;
 const widgetTitle = "Kondis";
 const useImageAsTitle = true;
 const bg_color1 = Color.dynamic(new Color("#fefefe"), new Color("#272727"));
@@ -101,10 +102,13 @@ async function createWidget() {
     t.layoutVertically();
     if (config.widgetFamily == "medium" || config.widgetFamily == null) {
         t.size = new Size(320, 120);
+        var numActivities = numActivitiesMedium;
     } else if (config.widgetFamily == "large") {
         t.size = new Size(320, 320);
+        var numActivities = numActivitiesLarge;
     } else {
         t.size = new Size(320, 0);
+        var numActivities = numActivitiesLarge;
     }
     for (let i = 0; i < numActivities; i++) {
         let r = t.addStack();
