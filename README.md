@@ -10,7 +10,7 @@ Trailing days, or this week as an option, and a function to add custom padding. 
 
 [<img width="125" src="https://scriptdu.de/download.svg">](https://scriptdu.de/?name=GarminWidget&source=https%3A%2F%2Fraw.githubusercontent.com%2FLanjelin%2Fscriptable%2Fmain%2FGarminActivitiesWidget.js&docs=https%3A%2F%2Fgithub.com%2FLanjelin%2Fscriptable)
 
-## GarminActivitiesWidget.js
+## KondisWidget.js
 Configurable to support number of activities, calories, distance and duration, for workout, walk, run, bike.  
 Trailing days, or this week as an option, and a function to add custom padding. Requires Garmin Connect profile set to public.  
 
