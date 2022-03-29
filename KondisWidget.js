@@ -7,11 +7,12 @@ const location = "rogaland";
 const sport = "running"; // all, running, skiing, cycling or multisport
 const distanceFrom = 5000; // distance in meters
 const distanceTo = 10000; // distance in meters
-const numActivities = 6; // how many activities to display, adjust for bigger widget sizes
 const getCarousel = false; // get carousel runs?
 const filterOutActivities = []; // hide activities based on name
 // Styling
 const spacerBottom = 0; // padding at bottom if needed
+const numActivitiesMedium = 6;
+const numActivitiesLarge = 18;
 const widgetTitle = "Kondis";
 const useImageAsTitle = true;
 const bg_color1 = Color.dynamic(new Color("#fefefe"), new Color("#272727"));
