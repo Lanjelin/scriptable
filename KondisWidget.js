@@ -3,7 +3,7 @@
 // Kondis Widget
 //
 // User Input Start
-const location = "rogaland";
+const location = "rogaland"; // supports same options as the website, foslo for the county - oslo for the city
 const sport = "running"; // all, running, skiing, cycling or multisport
 const distanceFrom = 5000; // distance in meters
 const distanceTo = 10000; // distance in meters
