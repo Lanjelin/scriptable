@@ -1,3 +1,4 @@
+// icon-color: purple; icon-glyph: calendar-alt;
 //
 // Kondis Widget
 //
@@ -31,9 +32,26 @@ if (config.runsInWidget) {
 Script.complete();
 
 async function createWidget() {
+    // Defining size dependent variables
+    let t_size;
+    let numActivities;
+    let g_locations;
+    if (config.widgetFamily == "medium" || config.widgetFamily == null) {
+        g_locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
+        t_size = new Size(320, 120);
+        numActivities = numActivitiesMedium;
+    } else if (config.widgetFamily == "large") {
+        g_locations = [0, 0.95, 0.955, 0.96, 0.965, 0.97, 0.975, 0.98, 0.985, 0.99, 0.995, 1];
+        t_size = new Size(320, 320);
+        numActivities = numActivitiesLarge;
+    } else {
+        g_locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
+        t_size = new Size(320, 0);
+        numActivities = numActivitiesLarge;
+    }
     // Background
     let g = new LinearGradient();
-    g.locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
+    g.locations = g_locations;
     g.colors = [
         bg_color1,
         bg_color2,
@@ -99,13 +117,7 @@ async function createWidget() {
     // Iterating and populating
     let t = w.addStack()
     t.layoutVertically();
-    if (config.widgetFamily == "medium" || config.widgetFamily == null) {
-        t.size = new Size(320, 120);
-    } else if (config.widgetFamily == "large") {
-        t.size = new Size(320, 320);
-    } else {
-        t.size = new Size(320, 0);
-    }
+    t.size = t_size;
     for (let i = 0; i < numActivities; i++) {
         let r = t.addStack();
         let rd = r.addStack();
