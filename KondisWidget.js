@@ -13,8 +13,6 @@ const filterOutActivities = []; // hide activities based on name
 const spacerBottom = 0; // padding at bottom if needed
 const numActivitiesMedium = 6;
 const numActivitiesLarge = 18;
-const widgetTitle = "Kondis";
-const useImageAsTitle = true;
 const bg_color1 = Color.dynamic(new Color("#fefefe"), new Color("#272727"));
 const bg_color2 = Color.dynamic(new Color("#f1f1f1"), new Color("#1d1d1d"));
 const title_font = Font.semiboldRoundedSystemFont(22);
@@ -33,6 +31,11 @@ if (config.runsInWidget) {
 Script.complete();
 
 async function createWidget() {
+    // Adding filemanager
+    let iCloud = module.filename.includes('Documents/iCloud~')
+    let fm = iCloud ? FileManager.iCloud() : FileManager.local();
+    let path = fm.joinPath(fm.documentsDirectory(), "/cache/kondis");
+    fm.createDirectory(path, true);
     // Defining size dependent variables
     let t_size;
     let numActivities;
@@ -74,21 +77,12 @@ async function createWidget() {
     w.backgroundGradient = g;
     // Adding title
     let titleStack = w.addStack();
-    if (useImageAsTitle) {
-        titleStack.size = new Size(320, 18);
-        let img = await new Request("https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/images/kondis.png").loadImage();
-        let wtitle = titleStack.addImage(img);
-    } else {
-        titleStack.size = new Size(320, 0);
-        let wtitle = titleStack.addText(widgetTitle);
-        wtitle.font = title_font;
-        wtitle.textColor = text_color;
-    }
+    titleStack.size = new Size(320, 18);
+    let kondisLogo = await getKondisLogo(fm, path);
+    let wtitle = titleStack.addImage(kondisLogo);
+    wtitle.url = "https://kondis.no"
     // Defining cache-file
-    let iCloud = module.filename.includes('Documents/iCloud~')
-    let fm = iCloud ? FileManager.iCloud() : FileManager.local();
-    let fileName = widgetTitle + "_" + sport + "_" + numActivities.toString() + ".json";
-    let path = fm.joinPath(fm.documentsDirectory(), "/cache/kondis");
+    let fileName = sport + "_" + numActivities.toString() + ".json";
     fm.createDirectory(path, true);
     let file = fm.joinPath(path, fileName);
     // Getting data
@@ -161,6 +155,19 @@ function getDate(year) {
         pad2(date.getMonth() + 1),
         date.getFullYear() + year,
     ].join("-");
+}
+// Return image path
+async function getKondisLogo(fm, path) {
+    let imageName = "kondis.png";
+    let imageFile = fm.joinPath(path, imageName);
+    if (fm.fileExists(imageFile)){
+        return fm.readImage(imageFile)
+    } else {
+        let img = await new Request("https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/images/kondis.png").loadImage();
+        fm.writeImage(imageFile, img);
+        return fm.readImage(imageFile)
+    }
+    
 }
 // Return cached or external data
 async function getKondisData(fm, file, sport, distanceFrom, distanceTo, location) {
