@@ -85,9 +85,12 @@ async function createWidget() {
         wtitle.textColor = text_color;
     }
     // Defining cache-file
-    let fm = FileManager.local();
+    let iCloud = module.filename.includes('Documents/iCloud~')
+    let fm = iCloud ? FileManager.iCloud() : FileManager.local();
     let fileName = widgetTitle + "_" + sport + "_" + numActivities.toString() + ".json";
-    let file = fm.joinPath(fm.documentsDirectory(), fileName);
+    let path = fm.joinPath(fm.documentsDirectory(), "/cache/kondis");
+    fm.createDirectory(path, true);
+    let file = fm.joinPath(path, fileName);
     // Getting data
     let kondisActivities = await getKondisData(fm, file, sport, distanceFrom, distanceTo, location);
     // Function to get corrwct url
