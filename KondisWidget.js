@@ -84,8 +84,12 @@ async function createWidget() {
         wtitle.font = title_font;
         wtitle.textColor = text_color;
     }
+    // Defining cache-file
+    let fm = FileManager.local();
+    let fileName = widgetTitle + "_" + sport + "_" + numActivities.toString() + ".json";
+    let file = fm.joinPath(fm.documentsDirectory(), fileName);
     // Getting data
-    let kondisActivities = await getKondisData(sport, distanceFrom, distanceTo, location);
+    let kondisActivities = await getKondisData(fm, file, sport, distanceFrom, distanceTo, location);
     // Function to get corrwct url
     function getEventUrl(type, id) {
         const sports = { "running": "l%C3%B8ping", "skiing": "ski", "cycling": "sykling", "multisport": "multisport" }
@@ -155,8 +159,24 @@ function getDate(year) {
         date.getFullYear() + year,
     ].join("-");
 }
+// Return cached or external data
+async function getKondisData(fm, file, sport, distanceFrom, distanceTo, location) {
+    let parsedSettings = [sport, distanceFrom, distanceTo, location];
+    if (fm.fileExists(file)) {
+        let [timestamp, storedSettings, kondisData] = JSON.parse(fm.readString(file));
+        if (JSON.stringify(parsedSettings) === JSON.stringify(storedSettings)) {
+            if (timestamp + 2 >= new Date().getHours()) {
+                return kondisData;
+            }
+        }
+    }
+    let kondisData = await getExternalKondisData(sport, distanceFrom, distanceTo, location);
+    let fileData = [new Date().getHours(), parsedSettings, kondisData];
+    fm.writeString(file, JSON.stringify(fileData));
+    return kondisData
+}
 // Fetch data from kondis
-async function getKondisData(sportType, distanceFrom, distanceTo, address) {
+async function getExternalKondisData(sportType, distanceFrom, distanceTo, address) {
     const area = [
         "foslo",
         "rogaland",
