@@ -46,7 +46,7 @@ async function createWidget() {
         t_size = new Size(320, 320);
         numActivities = numActivitiesLarge;
     } else {
-        g_locations = [0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1];
+        g_locations = [0, 0.95, 0.955, 0.96, 0.965, 0.97, 0.975, 0.98, 0.985, 0.99, 0.995, 1];
         t_size = new Size(320, 0);
         numActivities = numActivitiesLarge;
     }
@@ -93,12 +93,6 @@ async function createWidget() {
     let file = fm.joinPath(path, fileName);
     // Getting data
     let kondisActivities = await getKondisData(fm, file, sport, distanceFrom, distanceTo, location);
-    // Function to get corrwct url
-    function getEventUrl(type, id) {
-        const sports = { "running": "l%C3%B8ping", "skiing": "ski", "cycling": "sykling", "multisport": "multisport" }
-        const baseUrl = "https://terminlista.kondis.no/"
-        return baseUrl + sports[type] + "/event/" + id
-    }
     // Function to filter activities
     function getFilteredActivity() {
         if (kondisActivities.length == 0) {
@@ -117,10 +111,6 @@ async function createWidget() {
             }
             return hit
         }
-    }
-    function formatDate(day) {
-        const d = new Date(day);
-        return (String(d.getDate())).padStart(2, "0") + "." + (String(d.getMonth() + 1).padStart(2, "0"));
     }
     // Iterating and populating
     let t = w.addStack()
@@ -149,7 +139,17 @@ async function createWidget() {
     w.addSpacer(spacerBottom);
     return w;
 }
-
+// Format date for widget
+function formatDate(day) {
+    const d = new Date(day);
+    return (String(d.getDate())).padStart(2, "0") + "." + (String(d.getMonth() + 1).padStart(2, "0"));
+}
+// Get the correct event url
+function getEventUrl(type, id) {
+    const sports = { "running": "l%C3%B8ping", "skiing": "ski", "cycling": "sykling", "multisport": "multisport" }
+    const baseUrl = "https://terminlista.kondis.no/"
+    return baseUrl + sports[type] + "/event/" + id
+}
 // Fething and formatting data
 function pad2(num) {
     return num.toString().padStart(2, "0")
