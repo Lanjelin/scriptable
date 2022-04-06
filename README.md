@@ -1,6 +1,7 @@
 # scriptable
-Collection of scripts made for Scriptable on iOS
+Collection of scripts made for Scriptable on iOS  
 
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 ## GarminActivitiesWidget.js
 Configurable to support number of activities, calories, distance and duration, for workout, walk, run, bike.  
 Trailing days, or this week as an option, and a function to add custom padding. Requires Garmin Connect profile set to public.  

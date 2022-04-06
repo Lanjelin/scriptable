@@ -18,12 +18,12 @@ async function createWidget() {
     theText.font = Font.semiboldSystemFont(16);
     theText.textColor = new Color("#2c3d3c");
   }
-  
+
   // Create new empty ListWidget instance
   let widget = new ListWidget();
   widget.setPadding(0, 12, 0, 0);
-  
-  // Set gradient background 
+
+  // Set gradient background
   let startColor = new Color("#e74c3c");
   let endColor = new Color("#f39c12");
   let gradient = new LinearGradient();
@@ -36,10 +36,10 @@ async function createWidget() {
   heading.leftAlignText();
   heading.font = Font.boldSystemFont(22);
   heading.textColor = new Color("#1c2d2c");
-  
+
   // Spacer between heading and values
   widget.addSpacer(8);
-  
+
   // Fetch values data
   let duinoJson = await getDuinoJson();
   let ducoStats = await getDucoStats();
@@ -51,13 +51,21 @@ async function createWidget() {
 
   // Add the values
   moreText(widget, "Bal: " + duinoBalance.toFixed(2).toString() + " ᕲ");
-  moreText(widget, "    ~$ " + (duinoValue*duinoBalance).toFixed(4));
+  moreText(widget, "    ~$ " + (duinoValue * duinoBalance).toFixed(4));
 
   widget.addSpacer(8);
 
-  moreText(widget, "Miners: " + duinoDiffMiners[0] + "/" + duinoDiffMiners[1] + "/" + duinoDiffMiners[2]);
+  moreText(
+    widget,
+    "Miners: " +
+      duinoDiffMiners[0] +
+      "/" +
+      duinoDiffMiners[1] +
+      "/" +
+      duinoDiffMiners[2]
+  );
   moreText(widget, "Rate: " + duinoRate + "H/s");
-  
+
   // Return the created widget
   return widget;
 }
@@ -75,7 +83,7 @@ async function getDuinoJson() {
 
 async function getDucoStats() {
   // Query url
-//   const url = "https://duco.sytes.net/statistics.json";
+  //   const url = "https://duco.sytes.net/statistics.json";
   const url = "https://server.duinocoin.com/statistics";
   // Initialize new request
   const request = new Request(url);
@@ -108,25 +116,25 @@ function getDiffMiners(duinoJson) {
   let avr = 0;
   let pc = 0;
   let oth = 0;
-  for(var i = 0; i < duinoJson.result.miners.length; i++) {
+  for (var i = 0; i < duinoJson.result.miners.length; i++) {
     let soft = duinoJson.result.miners[i].software;
-    if (soft.includes("ESP") ) {
+    if (soft.includes("ESP")) {
       esp += 1;
-    } else if (soft.includes("AVR") ) {
+    } else if (soft.includes("AVR")) {
       avr += 1;
-    } else if (soft.includes("PC") ) {
+    } else if (soft.includes("PC")) {
       pc += 1;
     } else {
       oth += 1;
     }
   }
-  return [avr,esp,pc,oth];
+  return [avr, esp, pc, oth];
 }
 
 function getDuinoRate(duinoJson) {
   // Parse mining rate
   let rate = 0;
-  for(var i = 0; i < duinoJson.result.miners.length; i++) {
+  for (var i = 0; i < duinoJson.result.miners.length; i++) {
     rate += duinoJson.result.miners[i].hashrate;
   }
   // We want SI Symbols
@@ -134,18 +142,17 @@ function getDuinoRate(duinoJson) {
   return suffRate;
 }
 
-function abbreviateNumber(number){
+function abbreviateNumber(number) {
   var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
-    // what tier? (determines SI symbol)
-    var tier = Math.log10(Math.abs(number)) / 3 | 0;
-    // if zero, we don't need a suffix
-    if(tier == 0) return number;
-    // get suffix and determine scale
-    var suffix = SI_SYMBOL[tier];
-    var scale = Math.pow(10, tier * 3);
-    // scale the number
-    var scaled = number / scale;
-    // format number and add suffix
-    return scaled.toFixed(1) + suffix;
+  // what tier? (determines SI symbol)
+  var tier = (Math.log10(Math.abs(number)) / 3) | 0;
+  // if zero, we don't need a suffix
+  if (tier == 0) return number;
+  // get suffix and determine scale
+  var suffix = SI_SYMBOL[tier];
+  var scale = Math.pow(10, tier * 3);
+  // scale the number
+  var scaled = number / scale;
+  // format number and add suffix
+  return scaled.toFixed(1) + suffix;
 }
-
