@@ -3,11 +3,6 @@
 // Kondis Widget
 //
 // User Input Start
-const location = "rogaland"; // supports same options as the website, foslo for the county - oslo for the city
-const sport = "running"; // all, running, skiing, cycling or multisport
-const distanceFrom = 5000; // distance in meters
-const distanceTo = 10000; // distance in meters
-const getCarousel = false; // get carousel runs?
 const filterOutActivities = []; // hide activities based on name
 // Styling
 const spacerBottom = 0; // padding at bottom if needed
@@ -19,22 +14,26 @@ const text_font = Font.semiboldRoundedSystemFont(14);
 const text_color = Color.dynamic(new Color("#1d1d1d"), new Color("#f1f1f1"));
 // User Input End
 
-// Widget function start
-let widget = await createWidget();
+// Adding filemanager
+const iCloud = module.filename.includes("Documents/iCloud~");
+const fm = iCloud ? FileManager.iCloud() : FileManager.local();
+const path = fm.joinPath(fm.documentsDirectory(), "/kondis");
+fm.createDirectory(path, true);
+
 // Check where the script is running
 if (config.runsInWidget) {
+  // Widget function start
+  let widget = await createWidget(await getSetttings(fm, path));
   Script.setWidget(widget);
 } else {
-  widget.presentMedium();
+  await displayConfigView(fm, path);
+  //let widget = await createWidget(await getSetttings(fm, path));
+  //widget.presentMedium();
 }
 Script.complete();
 
-async function createWidget() {
-  // Adding filemanager
-  let iCloud = module.filename.includes("Documents/iCloud~");
-  let fm = iCloud ? FileManager.iCloud() : FileManager.local();
-  let path = fm.joinPath(fm.documentsDirectory(), "/cache/kondis");
-  fm.createDirectory(path, true);
+async function createWidget(settings) {
+  let [sport, distanceFrom, distanceTo, getCarousel, location] = settings;
   // Defining size dependent variables
   let t_size;
   let numActivities;
@@ -87,8 +86,7 @@ async function createWidget() {
   let wtitle = titleStack.addImage(kondisLogo);
   wtitle.url = "https://kondis.no";
   // Defining cache-file
-  let fileName = sport + "_" + numActivities.toString() + ".json";
-  fm.createDirectory(path, true);
+  let fileName = "kondis-" + numActivities.toString() + ".json";
   let file = fm.joinPath(path, fileName);
   // Getting data
   let kondisActivities = await getKondisData(
@@ -177,11 +175,74 @@ function getDate(year) {
     date.getFullYear() + year,
   ].join("-");
 }
+
+// Display config webview
+async function displayConfigView(fm, path, save) {
+  const wv = new WebView();
+  await wv.loadURL(
+    "https://htmlpreview.github.io/?https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/html/kondis-settings.html"
+  );
+  await wv.waitForLoad();
+  // Storing settings to file
+  async function setSettings(fm, path, sport, from, to, carousel, location) {
+    let settingsName = "settings.json";
+    let settingsFile = fm.joinPath(path, settingsName);
+    fm.writeString(
+      settingsFile,
+      JSON.stringify([
+        sport,
+        parseInt(from),
+        parseInt(to),
+        carousel === "true",
+        location,
+      ])
+    );
+    return true;
+  }
+  // Watches for returned data from webview
+  function watcher() {
+    wv.evaluateJavaScript("console.log('watcher activated...');", true).then(
+      (res) => {
+        console.log("response: " + res);
+        let [sport, from, to, carousel, location] = JSON.parse(res);
+        let saved = setSettings(fm, path, sport, from, to, carousel, location);
+        if (saved) {
+          wv.evaluateJavaScript(
+            "window.onScriptableMessage('Lagret instillinger.')"
+          );
+        } else {
+          wv.evaluateJavaScript(
+            "window.onScriptableMessage('Feilet ved lagring.')"
+          );
+        }
+        watcher();
+      }
+    );
+  }
+  watcher();
+  wv.present(true);
+}
+// Reading settings from file, or creating a new file
+async function getSetttings(fm, path) {
+  let settingsName = "settings.json";
+  let settingsFile = fm.joinPath(path, settingsName);
+  if (fm.fileExists(settingsFile)) {
+    await fm.downloadFileFromiCloud(settingsFile);
+    return JSON.parse(fm.readString(settingsFile));
+  } else {
+    fm.writeString(
+      settingsFile,
+      JSON.stringify(["running", 5000, 10000, false, "rogaland"])
+    );
+    return ["running", 5000, 10000, false, "rogaland"];
+  }
+}
 // Return image path
 async function getKondisLogo(fm, path) {
   let imageName = "kondis.png";
   let imageFile = fm.joinPath(path, imageName);
   if (fm.fileExists(imageFile)) {
+    await fm.downloadFileFromiCloud(imageFile);
     return fm.readImage(imageFile);
   } else {
     let img = await new Request(
@@ -202,6 +263,7 @@ async function getKondisData(
 ) {
   let parsedSettings = [sport, distanceFrom, distanceTo, location];
   if (fm.fileExists(file)) {
+    await fm.downloadFileFromiCloud(file);
     let [timestamp, storedSettings, kondisData] = JSON.parse(
       fm.readString(file)
     );
@@ -257,16 +319,23 @@ async function getExternalKondisData(
   let query_date = {
     range: { date: { gte: getDate(0), lte: getDate(5), format: "dd-MM-yyyy" } },
   };
-  if (area.includes(address.replace(" ", "").toLocaleLowerCase())) {
+  if (
+    address == "" ||
+    address.toLocaleLowerCase() == "alle" ||
+    address == "false"
+  ) {
+    //pass
+  } else if (area.includes(address.replace(" ", "").toLocaleLowerCase())) {
     var query_area = { match_phrase: { "address.area": address } };
+    api_body.query.bool.filter.push(query_area);
   } else {
     var query_area = { match_phrase: { "address.town": address } };
+    api_body.query.bool.filter.push(query_area);
   }
   let query_range = {
     range: { "distances.length": { gte: distanceFrom, lte: distanceTo } },
   };
   api_body.query.bool.filter.push(query_date);
-  api_body.query.bool.filter.push(query_area);
   api_body.query.bool.filter.push(query_range);
   const request = new Request(api_url);
   request.headers = {
