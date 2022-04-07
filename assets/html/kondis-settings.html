@@ -44,7 +44,7 @@
         let distanceTo = document.getElementById("distanceTo").value;
         let location = document.getElementById("location").value;
         let carousel = document.getElementById("carousel").value;
-        let APP_DATA = [sport, distanceFrom, distanceTo, location, carousel];
+        let APP_DATA = [sport, distanceFrom, distanceTo, carousel, location];
         completion(JSON.stringify(APP_DATA));
       }
       window.onScriptableMessage = (data) => {
