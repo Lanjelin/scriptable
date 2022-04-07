@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <style>
+      .container {
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+      }
+      .footer {
+        margin: 0 auto;
+        padding: 6px 4px;
+      }
+      .footer input,
+      .footer p {
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        padding: 5px 5px;
+      }
+
+      #sport,
+      #distanceFrom,
+      #distanceTo,
+      #location {
+        width: 1in;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .grid > span {
+        padding: 6px 4px;
+      }
+    </style>
+    <script>
+      function sendData() {
+        let sport = document.getElementById("sport").value;
+        let distanceFrom = document.getElementById("distanceFrom").value;
+        let distanceTo = document.getElementById("distanceTo").value;
+        let location = document.getElementById("location").value;
+        let APP_DATA = [sport, distanceFrom, distanceTo, location];
+        completion(JSON.stringify(APP_DATA));
+      }
+      window.onScriptableMessage = (data) => {
+        document.getElementById("result").innerHTML = data;
+      };
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <form action="javascript:void(0)">
+        <div class="grid">
+          <span><label>Sport:&nbsp;</label></span>
+          <span>
+            <select id="sport" name="sport">
+              <option value="all" selected>Alle</option>
+              <option value="running">Løping</option>
+              <option value="skiing">Ski</option>
+              <option value="cycling">Sykling</option>
+              <option value="multisport">Multisport</option>
+            </select>
+          </span>
+
+          <span><label>Distanse Fra:&nbsp;</label></span>
+          <span>
+            <select id="distanceFrom" name="distanceFrom">
+              <option value="0">0km</option>
+              <option value="1000">1km</option>
+              <option value="5000" selected>5km</option>
+              <option value="10000">10km</option>
+              <option value="25000">25km</option>
+              <option value="45000">45km</option>
+            </select>
+          </span>
+
+          <span><label>Distanse Til::&nbsp;</label></span>
+          <span>
+            <select id="distanceTo" name="distanceTo">
+              <option value="1000">1km</option>
+              <option value="5000">5km</option>
+              <option value="10000" selected>10km</option>
+              <option value="25000">25km</option>
+              <option value="45000">45km</option>
+              <option value="75000">75km</option>
+              <option value="500000">&gt;75km</option>
+            </select>
+          </span>
+
+          <span><label>Fylke/Kommune:&nbsp;</label></span>
+          <span>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              placeholder="Fylke/Kommune"
+            />
+          </span>
+        </div>
+        <div class="footer">
+          <input type="submit" value="Lagre" onClick="sendData();" />
+          <p id="result"></p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
