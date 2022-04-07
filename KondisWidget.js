@@ -2,6 +2,13 @@
 //
 // Kondis Widget
 //
+// Heisann, hyggelig at du kikker innom.
+// De fleste innstillinger er tilgjengelige om en kjører scriptet fra scriptable app'en
+// Nedenfor er et filter om det er ytterligere aktiviteter en vil filtrere bort.
+// Scriptet krever iCloud, og om det er noen problemer med kjøring,
+// slett mappen med navn kondis, som finnes i Scriptable-mappen i iCloud, og prøv igjen.
+// Åpne gjerne et issue på github med forslag eller feil.
+//
 // User Input Start
 const filterOutActivities = []; // hide activities based on name
 // Styling
@@ -19,7 +26,6 @@ const iCloud = module.filename.includes("Documents/iCloud~");
 const fm = iCloud ? FileManager.iCloud() : FileManager.local();
 const path = fm.joinPath(fm.documentsDirectory(), "/kondis");
 fm.createDirectory(path, true);
-
 // Check where the script is running
 if (config.runsInWidget) {
   // Widget function start
@@ -31,7 +37,7 @@ if (config.runsInWidget) {
   //widget.presentMedium();
 }
 Script.complete();
-
+// Widget function
 async function createWidget(settings) {
   let [sport, distanceFrom, distanceTo, getCarousel, location] = settings;
   // Defining size dependent variables
@@ -175,7 +181,6 @@ function getDate(year) {
     date.getFullYear() + year,
   ].join("-");
 }
-
 // Display config webview
 async function displayConfigView(fm, path, save) {
   const wv = new WebView();
@@ -237,7 +242,7 @@ async function getSetttings(fm, path) {
     return ["running", 5000, 10000, false, "rogaland"];
   }
 }
-// Return image path
+// Return image
 async function getKondisLogo(fm, path) {
   let imageName = "kondis.png";
   let imageFile = fm.joinPath(path, imageName);
