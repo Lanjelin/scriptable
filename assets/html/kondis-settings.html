@@ -25,10 +25,8 @@
         padding: 5px 5px;
       }
 
-      #sport,
-      #distanceFrom,
-      #distanceTo,
-      #location {
+      .grid select,
+      .grid input {
         width: 1in;
       }
       .grid {
@@ -45,7 +43,8 @@
         let distanceFrom = document.getElementById("distanceFrom").value;
         let distanceTo = document.getElementById("distanceTo").value;
         let location = document.getElementById("location").value;
-        let APP_DATA = [sport, distanceFrom, distanceTo, location];
+        let carousel = document.getElementById("carousel").value;
+        let APP_DATA = [sport, distanceFrom, distanceTo, location, carousel];
         completion(JSON.stringify(APP_DATA));
       }
       window.onScriptableMessage = (data) => {
@@ -53,7 +52,6 @@
       };
     </script>
   </head>
-
   <body>
     <div class="container">
       <form action="javascript:void(0)">
@@ -62,13 +60,12 @@
           <span>
             <select id="sport" name="sport">
               <option value="all" selected>Alle</option>
-              <option value="running">Løping</option>
+              <option value="running" selected>Løping</option>
               <option value="skiing">Ski</option>
               <option value="cycling">Sykling</option>
               <option value="multisport">Multisport</option>
             </select>
           </span>
-
           <span><label>Distanse Fra:&nbsp;</label></span>
           <span>
             <select id="distanceFrom" name="distanceFrom">
@@ -80,7 +77,6 @@
               <option value="45000">45km</option>
             </select>
           </span>
-
           <span><label>Distanse Til::&nbsp;</label></span>
           <span>
             <select id="distanceTo" name="distanceTo">
@@ -93,7 +89,13 @@
               <option value="500000">&gt;75km</option>
             </select>
           </span>
-
+          <span><label>Vise Karuseller:&nbsp;</label></span>
+          <span>
+            <select id="carousel" name="distanceTo">
+              <option value="false" selected>Nei</option>
+              <option value="true">Ja</option>
+            </select>
+          </span>
           <span><label>Fylke/Kommune:&nbsp;</label></span>
           <span>
             <input
