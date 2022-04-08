@@ -300,7 +300,7 @@ async function getExternalKondisData(
     "innlandet",
     "møreogromsdal",
     "nordland",
-    "oslofylke",
+    "oslo",
     "rogaland",
     "tromsogfinnmark",
     "trøndelag",
