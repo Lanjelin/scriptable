@@ -183,10 +183,11 @@ function getDate(year) {
 }
 // Display config webview
 async function displayConfigView(fm, path, save) {
+  let html = await new Request(
+    "https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/html/kondis-settings.html"
+  ).loadString();
   const wv = new WebView();
-  await wv.loadURL(
-    "https://htmlpreview.github.io/?https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/html/kondis-settings.html"
-  );
+  await wv.loadHTML(html);
   await wv.waitForLoad();
   // Storing settings to file
   async function setSettings(fm, path, sport, from, to, carousel, location) {
