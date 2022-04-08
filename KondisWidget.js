@@ -296,17 +296,17 @@ async function getExternalKondisData(
   address
 ) {
   const area = [
-    "foslo",
-    "rogaland",
+    "agder",
+    "innlandet",
     "møreogromsdal",
     "nordland",
-    "viken",
-    "innlandet",
-    "vestfoldogtelemark",
-    "agder",
-    "vestland",
-    "trøndelag",
+    "oslofylke",
+    "rogaland",
     "tromsogfinnmark",
+    "trøndelag",
+    "vestfoldogtelemark",
+    "vestland",
+    "viken",
   ];
   const api_url =
     "https://appsolutely-search.es.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
