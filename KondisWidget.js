@@ -299,13 +299,13 @@ async function getExternalKondisData(
   const area = [
     "agder",
     "innlandet",
-    "møreogromsdal",
+    "møre og romsdal",
     "nordland",
     "oslo",
     "rogaland",
-    "tromsogfinnmark",
+    "troms og finnmark",
     "trøndelag",
-    "vestfoldogtelemark",
+    "vestfold og telemark",
     "vestland",
     "viken",
   ];
@@ -325,17 +325,17 @@ async function getExternalKondisData(
   let query_date = {
     range: { date: { gte: getDate(0), lte: getDate(5), format: "dd-MM-yyyy" } },
   };
-  if (
-    address == "" ||
-    address.toLocaleLowerCase() == "alle" ||
-    address == "false"
-  ) {
+  if (address == "" || address.toLowerCase() == "alle" || address == "false") {
     //pass
-  } else if (area.includes(address.replace(" ", "").toLocaleLowerCase())) {
-    var query_area = { match_phrase: { "address.area": address } };
+  } else if (area.includes(address.toLowerCase())) {
+    var query_area = {
+      match_phrase: { "address.area": address.toLowerCase() },
+    };
     api_body.query.bool.filter.push(query_area);
   } else {
-    var query_area = { match_phrase: { "address.town": address } };
+    var query_area = {
+      match_phrase: { "address.town": address.toLowerCase() },
+    };
     api_body.query.bool.filter.push(query_area);
   }
   let query_range = {
