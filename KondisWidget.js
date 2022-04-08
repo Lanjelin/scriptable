@@ -32,9 +32,12 @@ if (config.runsInWidget) {
   let widget = await createWidget(await getSetttings(fm, path));
   Script.setWidget(widget);
 } else {
-  await displayConfigView(fm, path);
-  //let widget = await createWidget(await getSetttings(fm, path));
-  //widget.presentMedium();
+  if (!args.queryParameters.exit) {
+    await displayConfigView(fm, path);
+  } else {
+    let widget = await createWidget(await getSetttings(fm, path));
+    widget.presentLarge();
+  }
 }
 Script.complete();
 // Widget function
@@ -44,13 +47,13 @@ async function createWidget(settings) {
   let t_size;
   let numActivities;
   let g_locations;
-  if (config.widgetFamily == "medium" || config.widgetFamily == null) {
+  if (config.widgetFamily == "medium") {
     g_locations = [
       0, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1,
     ];
     t_size = new Size(320, 120);
     numActivities = numActivitiesMedium;
-  } else if (config.widgetFamily == "large") {
+  } else if (config.widgetFamily == "large" || config.widgetFamily == null) {
     g_locations = [
       0, 0.95, 0.955, 0.96, 0.965, 0.97, 0.975, 0.98, 0.985, 0.99, 0.995, 1,
     ];
@@ -216,6 +219,8 @@ async function displayConfigView(fm, path, save) {
           wv.evaluateJavaScript(
             "window.onScriptableMessage('Lagret instillinger.')"
           );
+          const scriptUrl = URLScheme.forRunningScript() + "?exit=true";
+          Safari.open(scriptUrl);
         } else {
           wv.evaluateJavaScript(
             "window.onScriptableMessage('Feilet ved lagring.')"
@@ -226,7 +231,7 @@ async function displayConfigView(fm, path, save) {
     );
   }
   watcher();
-  wv.present(true);
+  wv.present();
 }
 // Reading settings from file, or creating a new file
 async function getSetttings(fm, path) {
