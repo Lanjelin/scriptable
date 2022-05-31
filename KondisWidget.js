@@ -279,7 +279,7 @@ async function getKondisData(
       fm.readString(file)
     );
     if (JSON.stringify(parsedSettings) === JSON.stringify(storedSettings)) {
-      if (timestamp + 2 >= new Date().getHours()) {
+      if (parseInt(timestamp) + (2*60*60*1000) >= Date.parse(new Date())) {
         return kondisData;
       }
     }
@@ -290,7 +290,7 @@ async function getKondisData(
     distanceTo,
     location
   );
-  let fileData = [new Date().getHours(), parsedSettings, kondisData];
+  let fileData = [Date.parse(new Date()), parsedSettings, kondisData];
   fm.writeString(file, JSON.stringify(fileData));
   return kondisData;
 }
