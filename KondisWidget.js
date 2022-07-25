@@ -315,7 +315,7 @@ async function getExternalKondisData(
     "viken",
   ];
   const api_url =
-    "https://appsolutely-search.es.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
+    "https://a9c5a4529f2a42cf9369cae912c8a370.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
   const api_auth =
     "ApiKey V19yR2dIa0JzS1oxeldxdDNTcGs6d2xvUW8xd2NUbU8wRXA2QUR5UEZldw==";
   let api_body = {
