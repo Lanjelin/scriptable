@@ -55,7 +55,7 @@ async function createWidget() {
 async function getPostJson() {
   // Query url
   const url =
-    "https://www.posten.no/levering-av-post/_/component/main/1/leftRegion/9?postCode=" +
+    "https://www.posten.no/levering-av-post/_/component/main/1/leftRegion/11?postCode=" +
     postNr;
 
   // Initialize new request
