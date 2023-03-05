@@ -52,12 +52,23 @@ async function createWidget() {
   return widget;
 }
 
-async function getPostJson() {
-  // Query url
-  const url =
-    "https://www.posten.no/levering-av-post/_/component/main/1/leftRegion/11?postCode=" +
-    postNr;
+async function getUrl() {
+  // Get the correct url
+  let wv = new WebView();
+  const url = "https://www.posten.no/levering-av-post";
+  wv.loadURL(url);
+  await wv.waitForLoad();
+  var data = await wv.evaluateJavaScript(
+    `document.querySelector("#mailbox-delivery-date").getAttribute("data-component-url")`
+    );
+  return data;
+}
 
+async function getPostJson() {
+  // Fetch data-component-url
+  let urlPart = await getUrl();
+  // Query url
+  const url = "https://www.posten.no" + urlPart + "?postCode=" + postNr;
   // Initialize new request
   const request = new Request(url);
   request.headers = { "x-requested-with": "XMLHttpRequest" };
@@ -68,8 +79,7 @@ async function getPostJson() {
 }
 
 function getDelivery(data) {
-  // Parse the balance
-  console.log(data);
+  // Parse the date
   let date = data.nextDeliveryDays;
   return date;
 }
