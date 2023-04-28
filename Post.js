@@ -43,43 +43,34 @@ async function createWidget() {
   // Fetch values data
   let postJson = await getPostJson();
   let dates = await getDelivery(postJson);
+
   // Add the values
   moreText(widget, dates[0]);
   widget.addSpacer(5);
   moreText(widget, dates[1]);
+  widget.addSpacer(5);
+  moreText(widget, dates[2]);
 
   // Return the created widget
   return widget;
 }
 
-async function getUrl() {
-  // Get the correct url
-  let wv = new WebView();
-  const url = "https://www.posten.no/levering-av-post";
-  wv.loadURL(url);
-  await wv.waitForLoad();
-  var data = await wv.evaluateJavaScript(
-    `document.querySelector("#mailbox-delivery-date").getAttribute("data-component-url")`
-    );
-  return data;
-}
-
 async function getPostJson() {
-  // Fetch data-component-url
-  let urlPart = await getUrl();
   // Query url
-  const url = "https://www.posten.no" + urlPart + "?postCode=" + postNr;
+  const url = "https://post.gn.gy/text/" + postNr + ".json";
+
   // Initialize new request
   const request = new Request(url);
-  request.headers = { "x-requested-with": "XMLHttpRequest" };
+
   // Execute the request and parse the response as json
   const response = await request.loadJSON();
+
   // Return the returned data
   return response;
 }
 
 function getDelivery(data) {
   // Parse the date
-  let date = data.nextDeliveryDays;
+  let date = data.delivery_dates;
   return date;
 }
