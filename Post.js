@@ -2,7 +2,7 @@
 // Enter your postcode
 const postNr = "4321";
 // 0: raw data, 1: text dates, 2: num days
-const textStyle = 2;
+const textStyle = 1;
 // Number of dates to show (1-5)
 const numDates = 2;
 // User config end
@@ -57,6 +57,7 @@ async function createWidget() {
   while ( i < numDates ) {
     widget.addSpacer(5);
     moreText(widget, dates[i]);
+    i++;
   }
 
   // Return the created widget
