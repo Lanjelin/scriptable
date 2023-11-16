@@ -1,4 +1,11 @@
-var postNr = "4321";
+// User config start
+// Enter your postcode
+const postNr = "4321";
+// 0: raw data, 1: text dates, 2: num days
+const textStyle = 2;
+// Number of dates to show (1-5)
+const numDates = 2;
+// User config end
 
 let widget = await createWidget();
 
@@ -46,18 +53,22 @@ async function createWidget() {
 
   // Add the values
   moreText(widget, dates[0]);
-  widget.addSpacer(5);
-  moreText(widget, dates[1]);
-  widget.addSpacer(5);
-  moreText(widget, dates[2]);
+  i = 1;
+  while ( i < numDates ) {
+    widget.addSpacer(5);
+    moreText(widget, dates[i]);
+  }
 
   // Return the created widget
   return widget;
 }
 
 async function getPostJson() {
+  // Endpoints
+  const endpoints = ['raw', 'text', 'next'];
+
   // Query url
-  const url = "https://post.gn.gy/text/" + postNr + ".json";
+  const url = "https://post.gn.gy/" + endpoints[textStyle] + "/" + postNr + ".json";
 
   // Initialize new request
   const request = new Request(url);
