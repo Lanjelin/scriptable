@@ -29,13 +29,13 @@ fm.createDirectory(path, true);
 // Check where the script is running
 if (config.runsInWidget) {
   // Widget function start
-  let widget = await createWidget(await getSetttings(fm, path));
+  let widget = await createWidget(await getSettings(fm, path));
   Script.setWidget(widget);
 } else {
   if (!args.queryParameters.exit) {
     await displayConfigView(fm, path);
   } else {
-    let widget = await createWidget(await getSetttings(fm, path));
+    let widget = await createWidget(await getSettings(fm, path));
     widget.presentLarge();
   }
 }
@@ -104,7 +104,7 @@ async function createWidget(settings) {
     sport,
     distanceFrom,
     distanceTo,
-    location
+    location,
   );
   // Function to filter activities
   function getFilteredActivity() {
@@ -187,7 +187,7 @@ function getDate(year) {
 // Display config webview
 async function displayConfigView(fm, path, save) {
   let html = await new Request(
-    "https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/html/kondis-settings.html"
+    "https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/html/kondis-settings.html",
   ).loadString();
   const wv = new WebView();
   await wv.loadHTML(html);
@@ -204,7 +204,7 @@ async function displayConfigView(fm, path, save) {
         parseInt(to),
         carousel === "true",
         location,
-      ])
+      ]),
     );
     return true;
   }
@@ -217,24 +217,24 @@ async function displayConfigView(fm, path, save) {
         let saved = setSettings(fm, path, sport, from, to, carousel, location);
         if (saved) {
           wv.evaluateJavaScript(
-            "window.onScriptableMessage('Lagret instillinger.')"
+            "window.onScriptableMessage('Lagret instillinger.')",
           );
           const scriptUrl = URLScheme.forRunningScript() + "?exit=true";
           Safari.open(scriptUrl);
         } else {
           wv.evaluateJavaScript(
-            "window.onScriptableMessage('Feilet ved lagring.')"
+            "window.onScriptableMessage('Feilet ved lagring.')",
           );
         }
         watcher();
-      }
+      },
     );
   }
   watcher();
   wv.present();
 }
 // Reading settings from file, or creating a new file
-async function getSetttings(fm, path) {
+async function getSettings(fm, path) {
   let settingsName = "settings.json";
   let settingsFile = fm.joinPath(path, settingsName);
   if (fm.fileExists(settingsFile)) {
@@ -243,7 +243,7 @@ async function getSetttings(fm, path) {
   } else {
     fm.writeString(
       settingsFile,
-      JSON.stringify(["running", 5000, 10000, false, "rogaland"])
+      JSON.stringify(["running", 5000, 10000, false, "rogaland"]),
     );
     return ["running", 5000, 10000, false, "rogaland"];
   }
@@ -257,7 +257,7 @@ async function getKondisLogo(fm, path) {
     return fm.readImage(imageFile);
   } else {
     let img = await new Request(
-      "https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/images/kondis.png"
+      "https://raw.githubusercontent.com/Lanjelin/scriptable/main/assets/images/kondis.png",
     ).loadImage();
     fm.writeImage(imageFile, img);
     return fm.readImage(imageFile);
@@ -270,16 +270,16 @@ async function getKondisData(
   sport,
   distanceFrom,
   distanceTo,
-  location
+  location,
 ) {
   let parsedSettings = [sport, distanceFrom, distanceTo, location];
   if (fm.fileExists(file)) {
     await fm.downloadFileFromiCloud(file);
     let [timestamp, storedSettings, kondisData] = JSON.parse(
-      fm.readString(file)
+      fm.readString(file),
     );
     if (JSON.stringify(parsedSettings) === JSON.stringify(storedSettings)) {
-      if (parseInt(timestamp) + (2*60*60*1000) >= Date.parse(new Date())) {
+      if (parseInt(timestamp) + 2 * 60 * 60 * 1000 >= Date.parse(new Date())) {
         return kondisData;
       }
     }
@@ -288,7 +288,7 @@ async function getKondisData(
     sport,
     distanceFrom,
     distanceTo,
-    location
+    location,
   );
   let fileData = [Date.parse(new Date()), parsedSettings, kondisData];
   fm.writeString(file, JSON.stringify(fileData));
@@ -299,7 +299,7 @@ async function getExternalKondisData(
   sportType,
   distanceFrom,
   distanceTo,
-  address
+  address,
 ) {
   const area = [
     "agder",
@@ -315,7 +315,7 @@ async function getExternalKondisData(
     "viken",
   ];
   const api_url =
-    "https://a9c5a4529f2a42cf9369cae912c8a370.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
+    "https://kondis-search.es.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
   const api_auth =
     "ApiKey V19yR2dIa0JzS1oxeldxdDNTcGs6d2xvUW8xd2NUbU8wRXA2QUR5UEZldw==";
   let api_body = {
