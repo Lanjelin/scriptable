@@ -95,7 +95,7 @@ async function createWidget(settings) {
   let wtitle = titleStack.addImage(kondisLogo);
   wtitle.url = "https://kondis.no";
   // Defining cache-file
-  let fileName = "kondis-" + numActivities.toString() + ".json";
+  let fileName = "kondis-firestore-" + numActivities.toString() + ".json";
   let file = fm.joinPath(path, fileName);
   // Getting data
   let kondisActivities = await getKondisData(
@@ -108,22 +108,13 @@ async function createWidget(settings) {
   );
   // Function to filter activities
   function getFilteredActivity() {
-    if (kondisActivities.length == 0) {
-      return false;
-    } else {
-      let hit = kondisActivities.shift();
-      if (!getCarousel) {
-        if ("carouselName" in hit["_source"]) {
-          hit = getFilteredActivity();
-        }
-      }
-      for (let filter of filterOutActivities) {
-        if (hit["_source"]["name"].includes(filter)) {
-          hit = getFilteredActivity();
-        }
-      }
+    while (kondisActivities.length > 0) {
+      const hit = kondisActivities.shift();
+      if (!getCarousel && "carouselName" in hit) continue;
+      if (filterOutActivities.some((filter) => hit.name.includes(filter))) continue;
       return hit;
     }
+    return null;
   }
   // Iterating and populating
   let t = w.addStack();
@@ -136,17 +127,15 @@ async function createWidget(settings) {
     let rn = r.addStack();
     let activity = getFilteredActivity();
     if (activity) {
-      activity = activity["_source"];
-      let dateText = formatDate(activity["date"]);
-      dt = rd.addText(dateText);
+      let dateText = formatDate(activity.date);
+      let dt = rd.addText(dateText);
       dt.textColor = text_color;
       dt.font = text_font;
       rd.addSpacer(2);
-      let nameText = activity["name"];
-      let nt = rn.addText(nameText);
+      let nt = rn.addText(activity.name);
       nt.textColor = text_color;
       nt.font = text_font;
-      nt.url = getEventUrl(activity["sportType"], activity["id"]);
+      nt.url = getEventUrl(activity.sportType, activity.id);
     }
   }
   w.addSpacer(spacerBottom);
@@ -172,17 +161,10 @@ function getEventUrl(type, id) {
   const baseUrl = "https://terminlista.kondis.no/";
   return baseUrl + sports[type] + "/event/" + id;
 }
-// Fething and formatting data
-function pad2(num) {
-  return num.toString().padStart(2, "0");
-}
-function getDate(year) {
-  let date = new Date();
-  return [
-    pad2(date.getDate()),
-    pad2(date.getMonth() + 1),
-    date.getFullYear() + year,
-  ].join("-");
+// Format a Firestore timestamp for the query's date window.
+function startOfToday() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 // Display config webview
 async function displayConfigView(fm, path, save) {
@@ -294,7 +276,8 @@ async function getKondisData(
   fm.writeString(file, JSON.stringify(fileData));
   return kondisData;
 }
-// Fetch data from kondis
+// Query the public Firestore REST API; Listen/channel is a browser session stream,
+// not an endpoint that can be replayed independently by a widget.
 async function getExternalKondisData(
   sportType,
   distanceFrom,
@@ -302,59 +285,104 @@ async function getExternalKondisData(
   address,
 ) {
   const area = [
-    "agder",
-    "innlandet",
-    "møre og romsdal",
-    "nordland",
-    "oslo",
-    "rogaland",
-    "troms og finnmark",
-    "trøndelag",
-    "vestfold og telemark",
-    "vestland",
-    "viken",
+    "agder", "innlandet", "møre og romsdal", "nordland", "oslo",
+    "rogaland", "troms og finnmark", "trøndelag",
+    "vestfold og telemark", "vestland", "viken",
+    "akershus", "buskerud", "østfold", "vestfold", "telemark",
+    "troms", "finnmark",
   ];
-  const api_url =
-    "https://kondis-search.es.europe-north1.gcp.elastic-cloud.com/kondis-mainevents-v2/_search";
-  const api_auth =
-    "ApiKey V19yR2dIa0JzS1oxeldxdDNTcGs6d2xvUW8xd2NUbU8wRXA2QUR5UEZldw==";
-  let api_body = {
-    query: { bool: { must: [], filter: [] } },
-    size: 50,
-    from: 0,
-    sort: [{ date: { order: "asc" } }],
+  const formerCounties = {
+    viken: ["akershus", "buskerud", "østfold"],
+    "vestfold og telemark": ["vestfold", "telemark"],
+    "troms og finnmark": ["troms", "finnmark"],
   };
+  const location = String(address || "").toLocaleLowerCase("no").trim();
+  const allLocations = !location || location === "alle" || location === "false";
+  const today = startOfToday();
+  const end = new Date(today);
+  end.setFullYear(end.getFullYear() + 5);
+  end.setDate(end.getDate() + 1);
+  const filters = [
+    {
+      fieldFilter: {
+        field: { fieldPath: "date" },
+        op: "GREATER_THAN_OR_EQUAL",
+        value: { timestampValue: today.toISOString() },
+      },
+    },
+    {
+      fieldFilter: {
+        field: { fieldPath: "date" },
+        op: "LESS_THAN",
+        value: { timestampValue: end.toISOString() },
+      },
+    },
+  ];
   if (["running", "skiing", "cycling", "multisport"].includes(sportType)) {
-    api_body.query.bool.filter.push({ match_phrase: { sportType: sportType } });
+    filters.push({
+      fieldFilter: {
+        field: { fieldPath: "sportType" },
+        op: "EQUAL",
+        value: { stringValue: sportType },
+      },
+    });
   }
-  let query_date = {
-    range: { date: { gte: getDate(0), lte: getDate(5), format: "dd-MM-yyyy" } },
+  const query = {
+    from: [{ collectionId: "mainEvents" }],
+    select: { fields: [
+      "date", "name", "sportType", "id", "distances", "address", "carouselName",
+    ].map((fieldPath) => ({ fieldPath })) },
+    where: { compositeFilter: { op: "AND", filters } },
+    orderBy: [
+      { field: { fieldPath: "date" }, direction: "ASCENDING" },
+      { field: { fieldPath: "__name__" }, direction: "ASCENDING" },
+    ],
+    limit: 100,
   };
-  if (address == "" || address.toLowerCase() == "alle" || address == "false") {
-    //pass
-  } else if (area.includes(address.toLowerCase())) {
-    var query_area = {
-      match_phrase: { "address.area": address.toLowerCase() },
+  const results = [];
+  const url =
+    "https://firestore.googleapis.com/v1/projects/kondisapp/databases/(default)/documents:runQuery";
+  while (results.length < 50) {
+    const request = new Request(url);
+    request.method = "POST";
+    request.headers = { "content-type": "application/json" };
+    request.body = JSON.stringify({ structuredQuery: query });
+    const response = await request.loadJSON();
+    if (!Array.isArray(response)) {
+      throw new Error("Firestore query failed: " + JSON.stringify(response));
+    }
+    const documents = response.filter((entry) => entry.document).map((entry) => entry.document);
+    for (const document of documents) {
+      const fields = document.fields || {};
+      const place = fields.address?.mapValue?.fields || {};
+      const actualLocation = area.includes(location) ? place.area : place.town;
+      const normalizedLocation = actualLocation?.stringValue?.toLocaleLowerCase("no");
+      if (!allLocations && normalizedLocation !== location &&
+          !formerCounties[location]?.includes(normalizedLocation)) continue;
+      const distances = fields.distances?.arrayValue?.values || [];
+      if (!distances.some((distance) => {
+        const length = distance.mapValue?.fields?.length;
+        const metres = Number(length?.integerValue ?? length?.stringValue);
+        return Number.isFinite(metres) && metres >= distanceFrom && metres <= distanceTo;
+      })) continue;
+      results.push({
+        date: fields.date?.timestampValue,
+        name: fields.name?.stringValue,
+        sportType: fields.sportType?.stringValue,
+        id: fields.id?.stringValue || document.name.split("/").pop(),
+        ...(fields.carouselName ? { carouselName: fields.carouselName.stringValue } : {}),
+      });
+      if (results.length === 50) break;
+    }
+    if (documents.length < query.limit) break;
+    const last = documents[documents.length - 1];
+    query.startAt = {
+      values: [
+        { timestampValue: last.fields.date.timestampValue },
+        { referenceValue: last.name },
+      ],
+      before: false,
     };
-    api_body.query.bool.filter.push(query_area);
-  } else {
-    var query_area = {
-      match_phrase: { "address.town": address.toLowerCase() },
-    };
-    api_body.query.bool.filter.push(query_area);
   }
-  let query_range = {
-    range: { "distances.length": { gte: distanceFrom, lte: distanceTo } },
-  };
-  api_body.query.bool.filter.push(query_date);
-  api_body.query.bool.filter.push(query_range);
-  const request = new Request(api_url);
-  request.headers = {
-    "content-type": "application/json",
-    authorization: api_auth,
-  };
-  request.method = "POST";
-  request.body = JSON.stringify(api_body);
-  let response = await request.loadJSON();
-  return response.hits.hits;
+  return results;
 }
